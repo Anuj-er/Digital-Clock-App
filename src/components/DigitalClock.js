@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Wind, Clock, Calendar as CalendarIcon, Thermometer, CloudRain } from 'lucide-react';
 
-// Previous components remain the same
 const DayDisplay = ({ currentDay }) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   
   return (
-    <div className="flex flex-wrap justify-center gap-2 mb-4 overflow-hidden">
+    <div className="flex flex-wrap justify-center gap-2 mb-4">
       {days.map((day, index) => (
         <div 
           key={day}
@@ -23,10 +22,10 @@ const DayDisplay = ({ currentDay }) => {
   );
 };
 
-const InfoCard = ({ icon: Icon, title, value, subValue, isLoading }) => (
-  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 flex items-start space-x-3 hover:bg-white/20 transition-all duration-300 overflow-hidden">
+const InfoCard = ({ icon: Icon, title, value, subValue, isLoading = false }) => (
+  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 flex items-start space-x-3 hover:bg-white/20 transition-all duration-300">
     <Icon className="text-blue-300 shrink-0" size={20} />
-    <div className="min-w-0 flex-1 overflow-hidden">
+    <div className="min-w-0 flex-1">
       <div className="text-white/60 text-xs truncate">{title}</div>
       <div className="text-white font-medium text-sm truncate">
         {isLoading ? "Loading..." : value}
@@ -47,12 +46,12 @@ const WeekProgress = ({ time }) => {
   const progress = (weekNumber / totalWeeks) * 100;
 
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 col-span-1 sm:col-span-2 hover:bg-white/20 transition-all duration-300 overflow-hidden">
-      <div className="flex items-center justify-between mb-1.5 overflow-hidden">
+    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 col-span-1 sm:col-span-2 hover:bg-white/20 transition-all duration-300">
+      <div className="flex items-center justify-between mb-1.5">
         <div className="text-white font-medium text-sm truncate">Week {weekNumber} of {totalWeeks}</div>
         <div className="text-blue-300 text-xs truncate ml-2">{progress.toFixed(1)}% of year</div>
       </div>
-      <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+      <div className="w-full bg-white/10 rounded-full h-1.5">
         <div 
           className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
           style={{ width: `${progress}%` }}
@@ -66,7 +65,7 @@ const WeekProgress = ({ time }) => {
 };
 
 const TimeDisplay = ({ hours, minutes, seconds, ampm }) => (
-  <div className="relative flex flex-col items-center overflow-hidden">
+  <div className="relative flex flex-col items-center">
     <div className="flex items-baseline justify-center">
       <span className="text-5xl sm:text-7xl text-white font-light tracking-wide">
         {hours}:{minutes}
@@ -84,13 +83,12 @@ const TimeDisplay = ({ hours, minutes, seconds, ampm }) => (
 const DigitalClock = () => {
   const [time, setTime] = useState(new Date());
   const [greeting, setGreeting] = useState('');
-  const [weather, setWeather] = useState({
+  const [weather] = useState({
     temp: 72,
     feels_like: 70,
     conditions: 'Clear',
     description: 'Clear skies'
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -132,21 +130,29 @@ const DigitalClock = () => {
     return Math.floor(diff / oneDay);
   };
 
+  const getSeason = () => {
+    const month = time.getMonth();
+    if (month >= 2 && month <= 4) return 'Spring';
+    if (month >= 5 && month <= 7) return 'Summer';
+    if (month >= 8 && month <= 10) return 'Fall';
+    return 'Winter';
+  };
+
   const hours = time.getHours() % 12 || 12;
   const minutes = formatNumber(time.getMinutes());
   const seconds = formatNumber(time.getSeconds());
   const ampm = time.getHours() >= 12 ? 'PM' : 'AM';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-3 sm:p-6 overflow-hidden">
-      <div className="bg-black/30 backdrop-blur-lg p-4 sm:p-6 rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden">
-        <div className="text-white/80 text-lg sm:text-2xl font-light mb-4 sm:mb-6 text-center overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-3 sm:p-6">
+      <div className="bg-black/30 backdrop-blur-lg p-4 sm:p-6 rounded-2xl shadow-2xl max-w-3xl w-full">
+        <div className="text-white/80 text-lg sm:text-2xl font-light mb-4 sm:mb-6 text-center">
           {greeting}
         </div>
         
         <DayDisplay currentDay={time.getDay()} />
         
-        <div className="mb-4 sm:mb-6 overflow-hidden">
+        <div className="mb-4 sm:mb-6">
           <TimeDisplay 
             hours={hours}
             minutes={minutes}
@@ -155,7 +161,7 @@ const DigitalClock = () => {
           />
         </div>
 
-        <div className="text-center text-white/70 text-sm sm:text-base mb-4 sm:mb-6 px-2 overflow-hidden">
+        <div className="text-center text-white/70 text-sm sm:text-base mb-4 sm:mb-6 px-2">
           {time.toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
@@ -164,7 +170,7 @@ const DigitalClock = () => {
           })}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <WeekProgress time={time} />
           
           <InfoCard 
@@ -190,13 +196,7 @@ const DigitalClock = () => {
           <InfoCard 
             icon={Wind} 
             title="Season" 
-            value={(() => {
-              const month = time.getMonth();
-              if (month >= 2 && month <= 4) return 'Spring';
-              if (month >= 5 && month <= 7) return 'Summer';
-              if (month >= 8 && month <= 10) return 'Fall';
-              return 'Winter';
-            })()} 
+            value={getSeason()} 
           />
 
           <InfoCard 
@@ -204,7 +204,6 @@ const DigitalClock = () => {
             title="Temperature" 
             value={`${Math.round(weather.temp)}°F`}
             subValue={`Feels like ${Math.round(weather.feels_like)}°F`}
-            isLoading={isLoading}
           />
 
           <InfoCard 
@@ -212,7 +211,6 @@ const DigitalClock = () => {
             title="Weather" 
             value={weather.conditions}
             subValue={weather.description}
-            isLoading={isLoading}
           />
         </div>
       </div>
@@ -220,4 +218,4 @@ const DigitalClock = () => {
   );
 };
 
-export default DigitalClock;``
+export default DigitalClock;
